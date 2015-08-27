@@ -1,5 +1,5 @@
 import unittest
-from t3.player import Player
+from player import Player
 
 class test_player(unittest.TestCase):
     
@@ -8,6 +8,9 @@ class test_player(unittest.TestCase):
     def setUp(self):
         self.p = Player()
         
+    def test_class(self):
+        self.assertIsInstance(self.p, Player, "p is not Player")
+    
         
         
 if __name__ == '__main__':
