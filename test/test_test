@@ -2,10 +2,9 @@ import unittest
 
 class test_test(unittest.TestCase):
     
-    self.context = None
+    context = None
     
     def setUp(self):
-        print "Test setup."
         self.context = True
         
     def test_true(self):
