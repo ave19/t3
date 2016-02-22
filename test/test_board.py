@@ -30,8 +30,63 @@ class test_player(unittest.TestCase):
     def test_convert_to_string(self):
         self.b.board = 12345
         expected = "121221020"
-        self.assertEqual(self.b.convert_to_string(self.b.board), expected)
+        self.assertEqual(self.b.convert_to_base3(self.b.board), expected)
 
+#
+# Empty Board Tests
+#
+    def test_convert_to_string_empty(self):
+        self.b.board = 0
+        expected = "000000000"
+        self.assertEqual(self.b.convert_to_base3(self.b.board), expected)
+
+    def test_board_as_string_empty(self):
+        self.b.board = 0
+        expected = " | | \n-|-|-\n | | \n-|-|-\n | | "
+        self.assertEqual(str(self.b), expected)
+
+    def test_convert_to_string_8000(self):
+        self.b.board = 8000
+        expected = "101222022"
+        self.assertEqual(self.b.convert_to_base3(self.b.board), expected)
+
+
+#
+# Center Square Tests
+#
+    def test_convert_to_string_center_square(self):
+        self.b.board = 81
+        expected = "000010000"
+        self.assertEqual(self.b.convert_to_base3(self.b.board), expected)
+
+    def test_board_as_string_center_square(self):
+        self.b.board = 81
+        expected = " | | \n-|-|-\n |X| \n-|-|-\n | | "
+        self.assertEqual(str(self.b), expected)
+
+#
+# Rebase Tests
+#
+    def test_rebase_hex(self):
+        test_number = "B"
+        expected = "11"
+        from_a = "0123456789ABCDEF"
+        to_a = "0123456789"
+        self.assertEqual(self.b.rebase(test_number, from_a, to_a), expected)
+
+    def test_simple_rebase_to_base3(self):
+        test_number = "1"
+        expected = "1"
+        from_a = "0123456789"
+        to_a = "012"
+        self.assertEqual(self.b.rebase(test_number, from_a, to_a), expected)
+
+    def test_simple_rebase_to_base10(self):
+        test_number = "10020120"
+        expected = "2364"
+        to_a = "0123456789"
+        from_a = "012"
+        self.assertEqual(self.b.rebase(test_number, from_a, to_a), expected)
 
 if __name__ == '__main__':
     unittest.main()
