@@ -12,15 +12,24 @@ class Board(object):
         self._data = {}
 
     def __str__(self):
-        return
-
-    @property
-    def map(self):
-        return {
-            "0": " ",
-            "1": "X",
-            "2": "O"
+        base3_board = self.convert_to_base3(self.board)
+        string_map = {
+            '0': ' ',
+            '1': 'X',
+            '2': 'O'
         }
+        rv = "%s|%s|%s\n-|-|-\n%s|%s|%s\n-|-|-\n%s|%s|%s" % (
+                string_map[base3_board[0]],
+                string_map[base3_board[1]],
+                string_map[base3_board[2]],
+                string_map[base3_board[3]],
+                string_map[base3_board[4]],
+                string_map[base3_board[5]],
+                string_map[base3_board[6]],
+                string_map[base3_board[7]],
+                string_map[base3_board[8]]
+            )
+        return rv
 
     @property
     def board(self):
@@ -40,13 +49,37 @@ class Board(object):
             return self.map[char]
         raise ValueError("cannot convert char: %s" % char)
 
-    # Stolen from: interactivepython.org
-    # pythondsConvertinganIntegertoaStringinAnyBase.html
-    def convert_to_string(self, n, base=3):
-        conversion_map = "0123456789ABCDEF"
-        if n < base:
-            return conversion_map[n]
-        else:
-            rv = self.convert_to_string(n // base, base)
-            rv = rv + conversion_map[n % base]
-            return rv
+    def convert_to_base3(self, n, base=3):
+        from_map = "0123456789"
+        to_map = "012"
+        rv = self.rebase(str(n), from_map, to_map)
+        # print "convert to base3: %s --> %s" % (n, rv)
+        return rv.zfill(9)
+
+    # Stolen from: code.activestate.com
+    # 496895-rebase-convert-a-number-tofrom-any-base-in-range-2
+    # http://code.activestate.com/recipes/users/4173556/
+    def rebase(self, number, from_alphabet, to_alphabet):
+        if not isinstance(number, str):
+            raise TypeError('The number must be a string.')
+
+        if len(from_alphabet) < 2 or len(to_alphabet) < 2:
+            raise ValueError('Alphabets must have at least two symbols.')
+        if (sorted(set(from_alphabet)) != sorted(from_alphabet) or
+                sorted(set(to_alphabet)) != sorted(to_alphabet)):
+            raise ValueError('Alphabets cannot have any repeated symbols.')
+
+        to_base = len(to_alphabet)
+        from_base = len(from_alphabet)
+        denary_number = 0
+
+        for i in range(len(number)):
+            denary_number += (from_base ** i) * from_alphabet.index(number[-(1 + i)])
+
+        arbitrary_base_number = ''
+
+        while denary_number != 0:
+            arbitrary_base_number = ''.join([to_alphabet[denary_number % to_base], arbitrary_base_number])
+            denary_number //= to_base
+
+        return arbitrary_base_number
