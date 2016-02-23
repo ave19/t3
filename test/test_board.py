@@ -88,5 +88,14 @@ class test_player(unittest.TestCase):
         from_a = "012"
         self.assertEqual(self.b.rebase(test_number, from_a, to_a), expected)
 
+#
+# Moves
+#
+    def test_move_set_too_low(self):
+        move = -1
+        with self.assertRaises(ValueError):
+            self.b.move(move)
+
+
 if __name__ == '__main__':
     unittest.main()
