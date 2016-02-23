@@ -18,6 +18,7 @@ class Board(object):
             '1': 'X',
             '2': 'O'
         }
+        
         rv = "%s|%s|%s\n-|-|-\n%s|%s|%s\n-|-|-\n%s|%s|%s" % (
                 string_map[base3_board[0]],
                 string_map[base3_board[1]],
