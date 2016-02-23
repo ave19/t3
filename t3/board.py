@@ -83,3 +83,12 @@ class Board(object):
             denary_number //= to_base
 
         return arbitrary_base_number
+
+
+    def move(self, target_square):
+        if target_square < 0 or target_square > 9:
+            raise ValueError("target square is out of range")
+        this_board = self.convert_to_base3(self.board)
+        print "this_board: %s" % this_board
+
+        
