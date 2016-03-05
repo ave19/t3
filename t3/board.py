@@ -7,63 +7,68 @@ class Board(object):
 
     min_board = 0
     max_board = 3 ** 9
+    string_map = { '0': ' ', '1': 'X', '2': 'O' }
 
     def __init__(self, *args, **kwargs):
         self._data = {}
+        self.reset_board()
+
 
     def __str__(self):
-        base3_board = self.convert_to_base3(self.board)
-        string_map = {
-            '0': ' ',
-            '1': 'X',
-            '2': 'O'
-        }
-
         rv = "%s|%s|%s\n-|-|-\n%s|%s|%s\n-|-|-\n%s|%s|%s" % (
-                string_map[base3_board[0]],
-                string_map[base3_board[1]],
-                string_map[base3_board[2]],
-                string_map[base3_board[3]],
-                string_map[base3_board[4]],
-                string_map[base3_board[5]],
-                string_map[base3_board[6]],
-                string_map[base3_board[7]],
-                string_map[base3_board[8]]
+            tuple([ self.string_map[x] for x in list(self.board) ])
             )
         return rv
+
 
     @property
     def board(self):
         # we want the base 3
         return self._data['board']
 
+
+    @property
+    def b10(self):
+        return self.convert_to_base10(self.board)
+
+
     @board.setter
     def board(self, new_board):
-        if new_board >= self.min_board and new_board <= self.max_board:
-            self._data['board'] = new_board
-        else:
-            raise ValueError("board must be between %s and %s, inclusive." %
-                             (self.min_board, self.max_board)
-                             )
+        # A board must be a nine character base 3 string.
+        if type(new_board) is not str:
+            raise ValueError("Board must be a 'str, not '%s'" % type(new_board))
 
-    def convert_to_character(self, char):
-        if char in self.map:
-            return self.map[char]
-        raise ValueError("cannot convert char: %s" % char)
+        if len(new_board) is not 9:
+            raise ValueError("Board must be 9 characters long")
+
+        if self.convert_to_base10(new_board) < self.min_board:
+            raise ValueError("Value %s is below %s." %
+                (new_board, self.min_board))
+
+        if self.convert_to_base10(new_board) > self.max_board:
+            raise ValueError("Value %s is above %s." %
+                (new_board, self.max_board))
+
+        self._data['board'] = new_board
+
+
+    def reset_board(self):
+        self.board = '000000000'
+
 
     def convert_to_base3(self, n, base=3):
         from_map = "0123456789"
         to_map = "012"
         rv = self.rebase(str(n), from_map, to_map)
-        # print "convert to base3: %s --> %s" % (n, rv)
         return rv.zfill(9)
 
-    def convert_to_base10(self, n, base=3):
+
+    def convert_to_base10(self, n, base=10):
         from_map = "012"
         to_map = "0123456789"
         rv = self.rebase(str(n), from_map, to_map)
-        # print "convert to base3: %s --> %s" % (n, rv)
-        return rv.zfill(9)
+        return int(rv)
+
 
     # Stolen from: code.activestate.com
     # 496895-rebase-convert-a-number-tofrom-any-base-in-range-2
@@ -88,14 +93,37 @@ class Board(object):
         arbitrary_base_number = ''
 
         while denary_number != 0:
-            arbitrary_base_number = ''.join([to_alphabet[denary_number % to_base], arbitrary_base_number])
+            arbitrary_base_number = ''.join(
+                [to_alphabet[denary_number % to_base],
+                arbitrary_base_number]
+                )
             denary_number //= to_base
 
-        return arbitrary_base_number
+        if arbitrary_base_number == '':
+            return '0'
+        else:
+            return arbitrary_base_number
 
 
-    def move(self, target_square):
-        if target_square < 0 or target_square > 9:
+    def move(self, target_square, new_value):
+        # The number of the square is one more than the index we have to change.
+        target_square = target_square - 1
+        if target_square < 0 or target_square > 8:
             raise ValueError("target square is out of range")
-        this_board = self.convert_to_base3(self.board)
-        print "this_board: %s" % this_board
+        board_state = list(self.board)
+        board_state[target_square] = str(new_value)
+        self.board = ''.join(board_state)
+
+
+    def has_winner(self):
+        winning_patterns = [
+            [0,1,2], [0,4,8], [0,3,6], [1,4,7], [2,4,6], [2,5,8],
+            [3,4,5], [6,7,8]
+        ]
+        state = list(self.board)
+        for pattern in winning_patterns:
+            if state[pattern[0]] == '0':
+                continue
+            if state[pattern[1]] == state[pattern[0]] and state[pattern[2]] == state[pattern[0]]:
+                return state[pattern[0]]
+        return False
