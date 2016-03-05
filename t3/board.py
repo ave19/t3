@@ -18,7 +18,7 @@ class Board(object):
             '1': 'X',
             '2': 'O'
         }
-        
+
         rv = "%s|%s|%s\n-|-|-\n%s|%s|%s\n-|-|-\n%s|%s|%s" % (
                 string_map[base3_board[0]],
                 string_map[base3_board[1]],
@@ -34,6 +34,7 @@ class Board(object):
 
     @property
     def board(self):
+        # we want the base 3
         return self._data['board']
 
     @board.setter
@@ -53,6 +54,13 @@ class Board(object):
     def convert_to_base3(self, n, base=3):
         from_map = "0123456789"
         to_map = "012"
+        rv = self.rebase(str(n), from_map, to_map)
+        # print "convert to base3: %s --> %s" % (n, rv)
+        return rv.zfill(9)
+
+    def convert_to_base10(self, n, base=3):
+        from_map = "012"
+        to_map = "0123456789"
         rv = self.rebase(str(n), from_map, to_map)
         # print "convert to base3: %s --> %s" % (n, rv)
         return rv.zfill(9)
@@ -91,5 +99,3 @@ class Board(object):
             raise ValueError("target square is out of range")
         this_board = self.convert_to_base3(self.board)
         print "this_board: %s" % this_board
-
-        
