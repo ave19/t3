@@ -40,7 +40,7 @@ class test_player(unittest.TestCase):
         self.b.move(1, 'X')
         self.assertEqual(str(self.b), expected, "square one not upper right:\n%s" % self.b)
 
-    def test_convert_to_base10(self):
+    def test_b10_property(self):
         expected = 8038
         self.b.board = '102000201'
         self.assertEqual(self.b.b10, expected,

@@ -43,18 +43,19 @@ class Board(object):
     def board(self, new_board):
         # A board must be a nine character base 3 string.
         if type(new_board) is not str:
-            raise ValueError("Board must be a 'str, not '%s'" % type(new_board))
+            raise ValueError("Board must be a 'str, not '%s'"
+                % type(new_board))
 
         if len(new_board) is not 9:
             raise ValueError("Board must be 9 characters long")
 
         if self.convert_to_base10(new_board) < self.min_board:
-            raise ValueError("Value %s is below %s." %
-                (new_board, self.min_board))
+            raise ValueError("Value %s is below %s."
+                % (new_board, self.min_board))
 
         if self.convert_to_base10(new_board) > self.max_board:
-            raise ValueError("Value %s is above %s." %
-                (new_board, self.max_board))
+            raise ValueError("Value %s is above %s."
+                % (new_board, self.max_board))
 
         self._data['board'] = new_board
 
@@ -107,8 +108,9 @@ class Board(object):
 
         if len(from_alphabet) < 2 or len(to_alphabet) < 2:
             raise ValueError('Alphabets must have at least two symbols.')
-        if (sorted(set(from_alphabet)) != sorted(from_alphabet) or
-                sorted(set(to_alphabet)) != sorted(to_alphabet)):
+
+        if ( sorted(set(from_alphabet)) != sorted(from_alphabet)
+                or sorted(set(to_alphabet)) != sorted(to_alphabet)):
             raise ValueError('Alphabets cannot have any repeated symbols.')
 
         to_base = len(to_alphabet)
@@ -135,25 +137,22 @@ class Board(object):
 
     def move(self, target_square, symbol):
         # The number of the square is one more than the index we have to change.
-        new_value = self.get_player_number_by_symbol(symbol)
 
         target_square = int(target_square)
 
         if target_square < self.min_spot:
-            raise ValueError("target square is too low: %s < %s" %
-                (target_square, self.min_spot)
-                )
+            raise ValueError("target square is too low: %s < %s"
+                % (target_square, self.min_spot) )
 
         if target_square > self.max_spot:
-            raise ValueError("target square is too high: %s > %s" %
-                (target_square, self.max_spot)
-                )
+            raise ValueError("target square is too high: %s > %s"
+                % (target_square, self.max_spot) )
 
         if not target_square in self.list_empty_spots():
             raise ValueError("target square is not empty")
 
         self.board = self.board[:target_square-1] \
-            + new_value \
+            + self.get_player_number_by_symbol(symbol) \
             + self.board[target_square:]
 
 
@@ -164,10 +163,11 @@ class Board(object):
         ]
         state = list(self.board)
         for pattern in winning_patterns:
-            if state[pattern[0]] == '0':
-                continue
-            if state[pattern[1]] == state[pattern[0]] and state[pattern[2]] == state[pattern[0]]:
-                return state[pattern[0]]
+            if state[pattern[0]] == state[pattern[1]] == state[pattern[2]]:
+                if state[pattern[0]] == '0':
+                    continue
+                else:
+                    return state[pattern[0]]
         return False
 
 
@@ -178,10 +178,12 @@ class Board(object):
 
 
     def get_player_number_by_symbol(self, symbol):
+
         if not symbol in self.string_map.values():
-            raise ValueError("No value %s in my symbols: %s" % (
-                symbol, self.string_map.values()
-            ))
+            raise ValueError("No value %s in my symbols: %s"
+                % (symbol, self.string_map.values())
+            )
+
         for (k,v) in self.string_map.iteritems():
             if symbol == v:
                 return k

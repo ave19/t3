@@ -12,17 +12,21 @@ class Game(object):
             self.players = []
             self.turn = 0
 
+
         def next_player(self):
             number_of_players = len(self.players)
             if self.turn >= number_of_players:
                 self.turn = 0
             return self.players[self.turn]
 
+
         def show_board(self):
             print "\nThe Board:\n%s" % self.board
 
+
         def show_moves_left(self):
             print "\nAvailable Moves:\n%s" % self.board.show_empty_spots()
+
 
         def round(self, player):
             if not type(player) is t3.player.Player:
