@@ -11,6 +11,11 @@ class test_player(unittest.TestCase):
     def test_class(self):
         self.assertIsInstance(self.p, Player, "p is not Player")
 
+    def test_init_with_name(self):
+        expected = "foo"
+        p = Player(expected)
+        self.assertEqual(p.name, expected, "name isn't foo")
+
 
 
 if __name__ == '__main__':
