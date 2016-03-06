@@ -15,7 +15,9 @@ class test_player(unittest.TestCase):
     def test_set_board(self):
         expected = '000111222'
         self.b.board = expected
-        self.assertEqual(self.b.board, expected, "board value not set correctly")
+        self.assertEqual(self.b.board, expected,
+            "board value not set correctly"
+            )
 
     def test_reset_board(self):
         expected = '000000000'
@@ -32,13 +34,17 @@ class test_player(unittest.TestCase):
         self.b.board = '000000000'
         self.b.move(5, 'X')
         expected = '000010000'
-        self.assertEqual(self.b.board, expected, "didn't move right: %s" % expected)
+        self.assertEqual(self.b.board, expected,
+            "didn't move right: %s" % expected
+            )
 
     def test_square_one_is_upper_right(self):
         expected = "X| | \n-|-|-\n | | \n-|-|-\n | | "
         self.b.board = '000000000'
         self.b.move(1, 'X')
-        self.assertEqual(str(self.b), expected, "square one not upper right:\n%s" % self.b)
+        self.assertEqual(str(self.b), expected,
+            "square one not upper right:\n%s" % self.b
+            )
 
     def test_b10_property(self):
         expected = 8038
@@ -140,13 +146,6 @@ class test_player(unittest.TestCase):
     def test_board_is_not_full(self):
         self.b.board = '121022121'
         self.assertFalse(self.b.is_full())
-
-
-
-#     def test_move_set_too_low(self):
-#         move = -1
-#         with self.assertRaises(ValueError):
-#             self.b.move(move)
 
 
 if __name__ == '__main__':
