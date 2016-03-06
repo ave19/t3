@@ -7,7 +7,11 @@ class Board(object):
 
     min_board = 0
     max_board = 3 ** 9
+    min_spot = 1
+    max_spot = 9
     string_map = { '0': ' ', '1': 'X', '2': 'O' }
+
+# =====================================================================
 
     def __init__(self, *args, **kwargs):
         self._data = {}
@@ -21,15 +25,18 @@ class Board(object):
         return rv
 
 
-    @property
-    def board(self):
-        # we want the base 3
-        return self._data['board']
-
+# =====================================================================
 
     @property
     def b10(self):
         return self.convert_to_base10(self.board)
+
+# =====================================================================
+
+    @property
+    def board(self):
+        # we want the base 3
+        return self._data['board']
 
 
     @board.setter
@@ -50,6 +57,27 @@ class Board(object):
                 (new_board, self.max_board))
 
         self._data['board'] = new_board
+
+# =====================================================================
+
+    def list_empty_spots(self):
+        empties = []
+        state = list(self.board)
+        for x in range(0, 9):
+            if state[x] == '0':
+                empties.append(x+1)
+        return empties
+
+
+    def show_empty_spots(self):
+        fillers = []
+        empties = self.list_empty_spots()
+        for x in range(1, 10):
+            if x in empties:
+                fillers.append(x)
+            else:
+                fillers.append(' ')
+        return "%s|%s|%s\n-|-|-\n%s|%s|%s\n-|-|-\n%s|%s|%s" % tuple(fillers)
 
 
     def reset_board(self):
@@ -105,14 +133,28 @@ class Board(object):
             return arbitrary_base_number
 
 
-    def move(self, target_square, new_value):
+    def move(self, target_square, symbol):
         # The number of the square is one more than the index we have to change.
-        target_square = target_square - 1
-        if target_square < 0 or target_square > 8:
-            raise ValueError("target square is out of range")
-        board_state = list(self.board)
-        board_state[target_square] = str(new_value)
-        self.board = ''.join(board_state)
+        new_value = self.get_player_number_by_symbol(symbol)
+
+        target_square = int(target_square)
+
+        if target_square < self.min_spot:
+            raise ValueError("target square is too low: %s < %s" %
+                (target_square, self.min_spot)
+                )
+
+        if target_square > self.max_spot:
+            raise ValueError("target square is too high: %s > %s" %
+                (target_square, self.max_spot)
+                )
+
+        if not target_square in self.list_empty_spots():
+            raise ValueError("target square is not empty")
+
+        self.board = self.board[:target_square-1] \
+            + new_value \
+            + self.board[target_square:]
 
 
     def has_winner(self):
@@ -127,3 +169,19 @@ class Board(object):
             if state[pattern[1]] == state[pattern[0]] and state[pattern[2]] == state[pattern[0]]:
                 return state[pattern[0]]
         return False
+
+
+    def is_full(self):
+        if '0' in self.board:
+            return False
+        return True
+
+
+    def get_player_number_by_symbol(self, symbol):
+        if not symbol in self.string_map.values():
+            raise ValueError("No value %s in my symbols: %s" % (
+                symbol, self.string_map.values()
+            ))
+        for (k,v) in self.string_map.iteritems():
+            if symbol == v:
+                return k

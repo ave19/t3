@@ -28,23 +28,17 @@ class test_player(unittest.TestCase):
         self.b.board = '000111222'
         self.assertEqual(str(self.b), expected, "not the right board")
 
-    def test_move_int(self):
-        self.b.board = '000000000'
-        self.b.move(5, 1)
-        expected = '000010000'
-        self.assertEqual(self.b.board, expected, "didn't move right")
-
     def test_move_str(self):
         self.b.board = '000000000'
-        self.b.move(5, '1')
+        self.b.move(5, 'X')
         expected = '000010000'
-        self.assertEqual(self.b.board, expected, "didn't move right")
+        self.assertEqual(self.b.board, expected, "didn't move right: %s" % expected)
 
     def test_square_one_is_upper_right(self):
         expected = "X| | \n-|-|-\n | | \n-|-|-\n | | "
         self.b.board = '000000000'
-        self.b.move(1, '1')
-        self.assertEqual(str(self.b), expected, "square one not upper right")
+        self.b.move(1, 'X')
+        self.assertEqual(str(self.b), expected, "square one not upper right:\n%s" % self.b)
 
     def test_convert_to_base10(self):
         expected = 8038
@@ -125,8 +119,30 @@ class test_player(unittest.TestCase):
         self.assertEqual(self.b.convert_to_base3(number), expected)
 
 #
-# Moves
-# #
+# Empties
+#
+    def test_empty_spots_one(self):
+        self.b.board = '120120120'
+        expected = [3, 6, 9]
+        empties = self.b.list_empty_spots()
+        self.assertListEqual(expected, empties)
+
+    def test_empty_spots_two(self):
+        self.b.board = '120120120'
+        expected = ' | |3\n-|-|-\n | |6\n-|-|-\n | |9'
+        empties = self.b.show_empty_spots()
+        self.assertEqual(expected, empties)
+
+    def test_board_is_full(self):
+        self.b.board = '121122121'
+        self.assertTrue(self.b.is_full())
+
+    def test_board_is_not_full(self):
+        self.b.board = '121022121'
+        self.assertFalse(self.b.is_full())
+
+
+
 #     def test_move_set_too_low(self):
 #         move = -1
 #         with self.assertRaises(ValueError):

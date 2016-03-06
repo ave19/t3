@@ -8,9 +8,10 @@ class Player(object):
 
     foo = False
 
-    def __init__(self, name="Player One", *args, **kwargs):
+    def __init__(self, name="Player One", symbol='*', *args, **kwargs):
         self._data = {}
         self.name = name
+        self.symbol = symbol
         self.strategy = None
 
     @property
@@ -20,6 +21,14 @@ class Player(object):
     @name.setter
     def name(self, new_name):
         self._data['name'] = str(new_name)
+
+    @property
+    def symbol(self):
+        return self._data['symbol']
+
+    @symbol.setter
+    def symbol(self, symbol='*'):
+        self._data['symbol'] = symbol
 
     @property
     def strategy(self):
@@ -37,3 +46,6 @@ class Player(object):
             raise ValueError("new strategy must be Strategy, not %s" %
                 type(new_strategy)
                 )
+
+    def collect_move(self):
+        return input("\n   %s, choose a square for %s: " % (self.name, self.symbol))
