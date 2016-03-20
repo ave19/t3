@@ -32,7 +32,7 @@ class TestStrategy(Strategy):
         # Always picks 1
         return 1
     def win(self):
-        # Test
+        # Test 2
         pass
     def lose(self):
         pass
