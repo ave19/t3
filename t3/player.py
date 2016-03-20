@@ -2,7 +2,7 @@
 #
 #
 
-from t3.strategy import Strategy
+from t3.strategy import Strategy, ManualStrategy
 
 class Player(object):
 
@@ -12,7 +12,7 @@ class Player(object):
         self._data = {}
         self.name = name
         self.symbol = symbol
-        self.strategy = None
+        self.strategy = ManualStrategy()
 
     @property
     def name(self):
@@ -35,17 +35,30 @@ class Player(object):
         return self._data['strategy']
 
     @strategy.setter
-    def strategy(self, new_strategy):
+    def strategy(self, new_strategy=None):
 
         # You can be None.
         if new_strategy == None:
-            self._data['stragegy'] = None
-        elif type(new_strategy) is Strategy:
-            self._data['stragegy'] = new_strategy
+            self._data['strategy'] = None
+        elif isinstance(new_strategy, Strategy):
+            self._data['strategy'] = new_strategy
         else:
             raise ValueError("new strategy must be Strategy, not %s" %
                 type(new_strategy)
                 )
 
-    def collect_move(self):
-        return input("\n   %s, choose a square for %s: " % (self.name, self.symbol))
+
+    def move(self, board):
+        return self.strategy.move(board, name=self.name, symbol=self.symbol)
+
+    def win(self):
+        print "%s is happy." % self.name
+        self.strategy.win()
+
+    def lose(self):
+        print "%s is sad." % self.name
+        self.strategy.lose()
+
+    def draw(self):
+        print "%s has mixed emotions." % self.name
+        self.strategy.draw()
