@@ -5,7 +5,7 @@
 class Strategy(object):
 
     def __init__(self, *args, **kwargs):
-        self._data = {}
+        self._data = {:}
         self.strategy_map = {}
 
     # Implement "move" given a board.
@@ -19,4 +19,4 @@ class Strategy(object):
 class ManualStrategy(Strategy):
 
         def move(self, board):
-             
+            pass
