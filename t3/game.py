@@ -20,23 +20,12 @@ class Game(object):
             return self.players[self.turn]
 
 
-        def show_board(self):
-            print "\nThe Board:\n%s" % self.board
-
-
-        def show_moves_left(self):
-            print "\nAvailable Moves:\n%s" % self.board.show_empty_spots()
-
-
         def round(self, player):
             if not type(player) is t3.player.Player:
                 raise ValueError("player must be Player, not %s" % (type(player)))
 
-            self.show_board()
-            self.show_moves_left()
-
             try:
-                move = player.collect_move()
+                move = player.move(self.board)
                 self.board.move(move, player.symbol)
                 self.turn += 1
             except ValueError as v:
@@ -44,13 +33,21 @@ class Game(object):
 
 
         def play(self):
+            self.two_player()
+
+        def two_player(self):
             self.players.append(t3.player.Player("Player One", "X"))
             self.players.append(t3.player.Player("Player Two", "O"))
             while not self.board.is_full():
                 player = self.next_player()
                 self.round(player)
                 if self.board.has_winner():
-                    print "\nCongratulations %s, you win!" % player.name
+                    player.win(self.board)
+                    player = self.next_player()
+                    player.lose(self.board)
                     break
                 if self.board.is_full():
-                    print "\nIt's a tie!\n"
+                    player.draw(self.board)
+                    player = self.next_player()
+                    player.draw(self.board)
+                    break
